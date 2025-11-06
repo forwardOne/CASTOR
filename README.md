@@ -1,4 +1,4 @@
-# Castor - AI Hacking Assistant
+# Castor - AI Pentest Assistant
 （開発途中）
 このプロジェクトは、サイバーセキュリティ学習（特にBoot2RootやCTF）を手助けするためのAIエージェントアプリケーションです。
 
