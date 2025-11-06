@@ -1,0 +1,20 @@
+{
+  "default": {
+    "temperature": 0.5,
+    "tools": [],
+    "response_mime_type": "text/plain",
+    "system_instruction": "あなたは丁寧で正確な情報を提供するアシスタントです。"
+  },
+  "creative": {
+    "temperature": 0.9,
+    "tools": [],
+    "response_mime_type": "text/plain",
+    "system_instruction": "あなたは詩的で創造的なアシスタントです。返答はマークダウンの詩形式でお願いします。"
+  },
+  "analyst_with_search": {
+    "temperature": 0.1,
+    "tools": ["google_search"],
+    "response_mime_type": "text/plain",
+    "system_instruction": "あなたは最新情報にアクセスし、回答の最後に必ずJSON形式で返します。JSONオブジェクトには 'summary' キーと 'details' キーを含めてください。"
+  }
+}
