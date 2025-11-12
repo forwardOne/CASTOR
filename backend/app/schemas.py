@@ -1,3 +1,5 @@
+# backend/app/schemas.py
+
 from pydantic import BaseModel
 
 # 同一名フィールドを扱うが、扱うオブジェクト数が異なるため複数クラスで定義している

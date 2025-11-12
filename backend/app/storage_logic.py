@@ -12,6 +12,7 @@ CHAT_SESSIONS_PATH.mkdir(exist_ok=True)
 """
 ファイル名の指定はphaseではなくfilenameでやる方がいいかも？
 save_messageではphase名を使ってファイル名を作成しているが、loadやdeleteではfilenameで指定した方が文脈上正しい
+送受信時にroleを明示的にする方がフロントでのユーザーかモデルかで表示分けするのが楽では？
 """
 
 
@@ -72,7 +73,7 @@ def load_history(project: str, phase: str) -> List[dict]:
 
 def save_message(project: str, phase: str, role: str, text: str):
     """
-    フロント入力メッセージを履歴ファイルに保存
+    メッセージを履歴ファイルに保存
     """
     path = _get_session_path(project, phase)
     messages = []
