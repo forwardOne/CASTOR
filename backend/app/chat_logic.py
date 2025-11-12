@@ -60,6 +60,18 @@ def get_generation_content_config(phase: str):
     return generate_content_config
 
 
+async def send_chat_message(message: str, phase: str = "default"):
+    """
+    メッセージ送信、応答取得、非SSE
+    履歴保存はエンドポイント側
+    """
+    global chat
+    config = get_generation_content_config(phase)
+    async with chat_lock:
+        response = await chat.send_message(message, config=config)
+        return response.text
+
+
 def init_chat():
     """
     チャットオブジェクト初期化
@@ -97,17 +109,4 @@ async def apply_history_to_chat(project: str, phase: str):
                 chat._history.append(types.Content(role="model", parts=[text]))
 
     print(f"History applied for project='{project}', phase='{phase}'.")
-
-
-async def send_chat_message(message: str, phase: str = "default"):
-    """
-    メッセージ送信、応答取得
-    """
-    global chat
-    config = get_generation_content_config(phase)
-    async with chat_lock:
-        response = await chat.send_message(message, config=config)
-        return response.text
-
-
 

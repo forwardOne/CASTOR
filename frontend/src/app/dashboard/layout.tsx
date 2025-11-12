@@ -8,15 +8,15 @@ export default function DashboardLayout() {
     <SidebarProvider>
       <div className="flex h-screen w-screen">
         <AppSidebar />
-        <SidebarInset className="flex flex-col flex-1">
-          <header className="flex h-14 shrink-0 items-center gap-2 border-b bg-background">
+        <SidebarInset>
+          <header className="flex h-14 shrink-0 items-center rounded-tl-lg rounded-tr-lg gap-2 border-b">
             <div className="flex items-center gap-2 px-3">
               <SidebarTrigger />
-              <h3 className="text-lg font-semibold">Dashboard</h3>
+              <h3 className="text-lg font-semibold">Castor</h3>
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto p-6 bg-muted/30">
+          <main className="flex-1 overflow-y-auto p-6">
             <Outlet />
           </main>
         </SidebarInset>

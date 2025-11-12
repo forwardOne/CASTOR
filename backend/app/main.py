@@ -3,7 +3,11 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from .schemas import ChatRequest, HistoryRequest, CreateProjectRequest
-from .chat_logic import init_chat, send_chat_message, reset_chat, apply_history_to_chat
+from .chat_logic import (
+    init_chat,
+    send_chat_message,
+    reset_chat,
+    apply_history_to_chat)
 from .storage_logic import (
     create_project, 
     load_history, 
@@ -43,12 +47,12 @@ def root():
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     """
-    メッセージ送信、応答取得、履歴保存
+    メッセージ送信、応答取得、履歴保存、非SSE
     send_chat_message
     save_message
     """
     try:
-        response = await send_chat_message(request.message, phase=request.phase)
+        response = await send_chat_message(message=request.message, phase=request.phase)
         
         save_message(request.project, request.phase, "user", request.message)
         save_message(request.project, request.phase, "model", response)
