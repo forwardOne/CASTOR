@@ -4,24 +4,23 @@ import { MessageRole } from '../types/types';
 
 export const useChat = () => {
   const [phase, setPhase] = useState('default');
-  const [input, setInput] = useState(''); // messageの代わりにinputを導入
-  const [messages, setMessages] = useState<Message[]>([]); // responseの代わりにmessages配列を導入
+  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return; // messageの代わりにinputを使用
+    if (!input.trim()) return;
 
     const userMessage: Message = {
       id: crypto.randomUUID(), // ユニークなIDを生成
       role: MessageRole.USER, // 'user'の代わりにenumを使用
-      content: input, // messageの代わりにinputを使用
+      content: input,
     };
     setMessages((prevMessages) => [...prevMessages, userMessage]); // ユーザーメッセージを追加
     setInput(''); // 入力フィールドをクリア
 
     setIsLoading(true);
-    // setResponse('AIが考え中です...'); // 不要になる
 
     try {
       const backendUrl = 'http://localhost:8000/chat'; // FastAPIのエンドポイント
@@ -30,7 +29,7 @@ export const useChat = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: userMessage.content, phase }), // userMessage.contentを使用
+        body: JSON.stringify({ message: userMessage.content, phase }), 
       });
 
       const data = await res.json();
@@ -66,9 +65,9 @@ export const useChat = () => {
   return {
     phase,
     setPhase,
-    input, // messageの代わりにinputを返す
-    setInput, // setMessageの代わりにsetInputを返す
-    messages, // responseの代わりにmessagesを返す
+    input,
+    setInput,
+    messages,
     isLoading,
     handleSubmit,
   };

@@ -6,8 +6,8 @@ function ChatPage() {
   const {
     phase,
     setPhase,
-    input, // messageの代わりにinputを受け取る
-    setInput, // setMessageの代わりにsetInputを受け取る
+    input,
+    setInput,
     messages,
     isLoading,
     handleSubmit,
@@ -15,18 +15,22 @@ function ChatPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-grow overflow-y-auto">
-        <ChatHistory messages={messages} isLoading={isLoading} />
+      <div className="flex-1 min-h-0">
+        <div className="flex flex-col h-full w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ChatHistory messages={messages} isLoading={isLoading} />
+        </div>
       </div>
-      <div className="p-4">
-        <ChatInput
-          phase={phase}
-          setPhase={setPhase}
-          input={input} // messageの代わりにinputを渡す
-          setInput={setInput} // setMessageの代わりにsetInputを渡す
-          isLoading={isLoading}
-          handleSubmit={handleSubmit}
-        />
+      <div className="">
+        <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ChatInput
+            phase={phase}
+            setPhase={setPhase}
+            input={input}
+            setInput={setInput}
+            isLoading={isLoading}
+            handleSubmit={handleSubmit}
+          />
+        </div>
       </div>
     </div>
   );

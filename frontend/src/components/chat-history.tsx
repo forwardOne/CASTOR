@@ -2,52 +2,75 @@
 import React from 'react';
 import type{ Message } from '../types/types';
 import { MessageRole } from '../types/types';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
+// interface
 interface ChatHistoryProps {
-  messages: Message[]; // responseの代わりにmessages配列を受け取る
+  messages: Message[];
   isLoading: boolean;
 }
 
-const WelcomeScreen = () => (
-  <div className="flex flex-col items-center justify-center h-full text-gray-500">
-    <h2 className="text-2xl font-semibold mb-2">Castor AI</h2>
-    <p className="text-lg">何かお手伝いできることはありますか？</p>
-    {/* ここに機能の例などを表示しても良い */}
+// チャット履歴がない場合のウェルカム画面
+const WelcomeScreen: React.FC = () => (
+    <div className="flex flex-col items-center text-foreground">
+        <div className="text-5xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent mb-4">
+            Hello, User
+        </div>
+        <p className="text-2xl text-muted-foreground">How can I help you today?</p>
+    </div>
+);
+
+// チャットメッセージバブル
+const ChatMessageBubble: React.FC<{ message: Message }> = ({ message }) => {
+  const isUser = message.role === MessageRole.USER;
+
+  // ユーザーメッセージ(右寄せ、最大幅設定、背景色)
+  const userContainerClass = 'justify-end';
+  const userBubbleClass = 'max-w-xs lg:max-w-md gap-2 rounded-lg px-3 py-2 bg-primary text-primary-foreground ml-auto';
+
+  // モデルメッセージ(左寄せ、最大幅なし、背景色)
+  const modelContainerClass = 'justify-start';
+  const modelBubbleClass = 'w-full gap-2 rounded-lg px-3 py-2 bg-muted text-muted-foreground'; 
+
+  return (
+    <div className={`flex mb-4 ${isUser ? userContainerClass : modelContainerClass}`}>
+      
+      <div
+        className={`px-4 py-2 ${
+          isUser
+            ? userBubbleClass
+            : modelBubbleClass
+        }`}
+        style={{ whiteSpace: 'pre-wrap' }}
+      >
+        {message.content}
+      </div>
+    </div>
+  );
+}
+
+// ローディングインジケーター
+const LoadingIndicator = () => (
+  <div className="flex justify-start">
+    <div className="max-w-xs lg:max-w-md px-4 py-2 rounded-lg bg-muted text-muted-foreground">
+      AIが考え中です...
+    </div>
   </div>
 );
 
 export const ChatHistory: React.FC<ChatHistoryProps> = ({ messages, isLoading }) => {
-  // メッセージが一つもなければウェルカム画面を表示
-  if (messages.length === 0) {
-    return <WelcomeScreen />;
+  if (messages.length === 0 && !isLoading) {
+    return <div className="flex flex-1 items-center justify-center p-4"><WelcomeScreen /></div>;
   }
 
   return (
-    <div className="flex flex-col space-y-4 p-4">
-      {messages.map((msg) => (
-        <div
-          key={msg.id}
-          className={`flex ${msg.role === MessageRole.USER ? 'justify-end' : 'justify-start'}`} // enumを使用
-        >
-          <div
-            className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-              msg.role === MessageRole.USER
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-800'
-            }`}
-            style={{ whiteSpace: 'pre-wrap' }}
-          >
-            {msg.content}
-          </div>
-        </div>
-      ))}
-      {isLoading && (
-        <div className="flex justify-start">
-          <div className="max-w-xs lg:max-w-md px-4 py-2 rounded-lg bg-gray-200 text-gray-800">
-            AIが考え中です...
-          </div>
-        </div>
-      )}
-    </div>
+    <ScrollArea className="flex-1">
+      <div className="flex flex-col space-y-4 p-4">
+        {messages.map((msg) => (
+          <ChatMessageBubble key={msg.id} message={msg} />
+        ))}
+        {isLoading && <LoadingIndicator />}
+      </div>
+    </ScrollArea>
   );
 };

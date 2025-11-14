@@ -6,17 +6,16 @@ import { AppSidebar } from "@/components/app-sidebar"
 export default function DashboardLayout() {
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-screen">
+      <div className="flex h-screen w-screen bg-sidebar">
         <AppSidebar />
         <SidebarInset>
-          <header className="flex h-14 shrink-0 items-center rounded-tl-lg rounded-tr-lg gap-2 border-b">
+          <header className="flex h-14 shrink-0 items-center bg-card rounded-tl-lg rounded-tr-lg gap-2">
             <div className="flex items-center gap-2 px-3">
               <SidebarTrigger />
-              <h3 className="text-lg font-semibold">Castor</h3>
+              <h2 className="text-lg text-card-foreground font-semibold">Castor</h2>
             </div>
           </header>
-
-          <main className="flex-1 overflow-y-auto p-6">
+          <main className="flex-1 overflow-y-auto bg-card rounded-bl-lg rounded-br-lg p-6">
             <Outlet />
           </main>
         </SidebarInset>

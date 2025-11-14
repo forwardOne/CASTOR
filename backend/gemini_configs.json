@@ -1,9 +1,9 @@
 {
   "default": {
     "temperature": 0.5,
-    "tools": [],
+    "tools": ["google_search"],
     "response_mime_type": "text/plain",
-    "system_instruction": "あなたは丁寧で正確な情報を提供するアシスタントです。"
+    "system_instruction": "あなたは丁寧で正確な情報を提供するアシスタントです。必要に応じて最新情報にアクセスしてください。回答はマークダウン形式でお願いします。"
   },
   "creative": {
     "temperature": 0.9,
@@ -15,6 +15,6 @@
     "temperature": 0.1,
     "tools": ["google_search"],
     "response_mime_type": "text/plain",
-    "system_instruction": "あなたは最新情報にアクセスし、回答の最後に必ずJSON形式で返します。JSONオブジェクトには 'summary' キーと 'details' キーを含めてください。"
+    "system_instruction": "あなたは最新情報にアクセスし、回答はマークダウン形式でお願いします。最後に必ず要約してJSON形式で返します。JSONオブジェクトには 'summary' キーと 'details' キーを含めてください。"
   }
 }
