@@ -1,0 +1,132 @@
+import * as React from "react";
+import { Trash2, MoreHorizontal } from "lucide-react";
+import {
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+} from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { useProject } from "@/hooks/useProject";
+
+interface ProjectHistoryListProps {
+  displayHistory: (project: string, phase: string, sessionId: string) => void;
+}
+
+type HistoryToDelete = { projectName: string; phase: string; sessionId: string } | null;
+
+export function ProjectHistoryList({ displayHistory }: ProjectHistoryListProps) {
+  const { projects, deleteHistory } = useProject();
+  const [historyToDelete, setHistoryToDelete] = React.useState<HistoryToDelete>(null);
+
+  const handleConfirmDelete = () => {
+    if (!historyToDelete) return;
+    deleteHistory(historyToDelete.projectName, historyToDelete.phase, historyToDelete.sessionId);
+    setHistoryToDelete(null);
+  };
+
+  return (
+    <>
+      <SidebarGroup className="flex-1 overflow-y-auto overflow-x-hidden">
+        <SidebarGroupLabel className="text-sidebar-foreground">Histories</SidebarGroupLabel>
+        <SidebarGroupContent className="group-data-[state=collapsed]:hidden">
+          {projects.length === 0 ? (
+            <p className="text-sm text-muted-foreground p-2">No projects found.</p>
+          ) : (
+            <Accordion type="multiple" className="w-full">
+              {projects.map((projectData) => (
+                <AccordionItem key={projectData.name} value={projectData.name}>
+                  <AccordionTrigger className="px-2 py-1.5 text-sm font-medium hover:no-underline">
+                    {projectData.name}
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-1">
+                    {projectData.histories.length === 0 ? (
+                      <p className="text-xs text-muted-foreground px-2 py-1">No history.</p>
+                    ) : (
+                      <div className="flex flex-col gap-1">
+                        {projectData.histories.map((historyItem) => (
+                          <div key={historyItem.id} className="flex items-center justify-between w-full pr-1 group">
+                            <Button
+                              variant="ghost"
+                              className="flex-1 justify-start h-auto px-2 py-1 text-xs"
+                              onClick={() => displayHistory(projectData.name, historyItem.phase, historyItem.id)}
+                            >
+                              <span className="truncate">{historyItem.phase}_{historyItem.id.substring(0, 8)}...</span>
+                            </Button>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7 shrink-0 opacity-0 group-hover:opacity-100"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <MoreHorizontal className="h-3.5 w-3.5" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent side="right" align="center">
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setHistoryToDelete({
+                                      projectName: projectData.name,
+                                      phase: historyItem.phase,
+                                      sessionId: historyItem.id,
+                                    });
+                                  }}
+                                  className="text-red-500"
+                                >
+                                  <Trash2 className="mr-2 h-4 w-4" /> Delete History
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          )}
+        </SidebarGroupContent>
+      </SidebarGroup>
+
+      <AlertDialog open={!!historyToDelete} onOpenChange={(isOpen) => !isOpen && setHistoryToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>本当によろしいですか?</AlertDialogTitle>
+            <AlertDialogDescription>
+              この操作は取り消せません。 このチャット履歴を完全に削除します。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}

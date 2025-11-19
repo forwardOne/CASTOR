@@ -143,7 +143,7 @@ export const useChat = () => {
     setDisplayedHistory(null);
   }, []);
 
-
+  // チャット送信処理
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || !project) return;
@@ -210,6 +210,7 @@ export const useChat = () => {
     }
   };
 
+  // チャットセッションをリセットする
   const resetChat = useCallback(async () => {
     setIsLoading(true);
     try {

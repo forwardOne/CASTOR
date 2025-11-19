@@ -10,6 +10,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { ModeToggle } from "@/components/mode-toggle";
 
 function InnerLayout() {
   const chatState = useChat();
@@ -17,14 +18,14 @@ function InnerLayout() {
   const { state: sidebarState } = useSidebar(); // useSidebar を呼び出し
 
   return (
-    <div className="flex h-screen w-screen bg-sidebar">
+    <div className="flex h-screen w-screen bg-muted">
       <AppSidebar startNewChat={chatState.startNewChat} displayHistory={chatState.displayHistory} resetChat={resetChat} project={project} />
       <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center bg-card rounded-tl-lg rounded-tr-lg gap-2">
+        <header className="flex h-14 shrink-0 items-center bg-card md:rounded-tl-xl md:rounded-tr-xl gap-2">
           <div className="flex items-center gap-4 px-3">
             <SidebarTrigger className="" />
             {sidebarState === 'collapsed' && (
-              <div className="text-2xl text-muted-foreground font-semibold mb-1 pr-3">Castor</div>
+              <div className="text-lg text-muted-foreground font-semibold mb-1 pr-3">CASTOR - AI Pentest Assistant</div>
             )}
             {project && (
               <>
@@ -43,8 +44,11 @@ function InnerLayout() {
               </>
             )}
           </div>
+          <div className="ml-auto pr-3">
+            <ModeToggle />
+          </div>
         </header>
-        <main className="flex-1 overflow-y-auto bg-card rounded-bl-lg rounded-br-lg p-6">
+        <main className="flex-1 overflow-y-auto bg-card md:rounded-bl-xl md:rounded-br-xl p-6">
           <Outlet context={chatState} />
         </main>
       </SidebarInset>

@@ -1,0 +1,134 @@
+import * as React from "react";
+import { FolderPlus, SquarePen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import { useProject } from "@/hooks/useProject";
+
+interface SidebarActionsProps {
+  startNewChat: (project: string, phase: string) => void;
+}
+
+export function SidebarActions({ startNewChat }: SidebarActionsProps) {
+  const {
+    projects,
+    newProjectName,
+    setNewProjectName,
+    isCreateProjectDialogOpen,
+    setIsCreateProjectDialogOpen,
+    handleCreateProject,
+  } = useProject();
+
+  // For "New Chat" Dialog
+  const [isNewChatDialogOpen, setIsNewChatDialogOpen] = React.useState(false);
+  const [selectedProject, setSelectedProject] = React.useState<string>("");
+  const [selectedPhase, setSelectedPhase] = React.useState<string>("default");
+
+  const phaseLists = [
+    "default", "1_Recon_Enumeration", "2_Vulnerability_Identification",
+    "3_Exploitation Preparation", "4_Initial_Foothold", "5_Exploitation",
+    "6_Privilege_Escalation", "7_Flag_Capture"
+  ];
+
+  const handleStartChat = () => {
+    if (!selectedProject) {
+      console.error("Project must be selected");
+      return;
+    }
+    startNewChat(selectedProject, selectedPhase);
+    setIsNewChatDialogOpen(false);
+  };
+
+  React.useEffect(() => {
+    if (projects.length > 0 && !selectedProject) {
+      setSelectedProject(projects[0].name);
+    }
+  }, [projects, selectedProject]);
+
+  return (
+    <>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <Button variant="ghost" className="w-full text-base justify-start" onClick={() => setIsNewChatDialogOpen(true)}>
+              <SquarePen className="mr-2 h-4 w-4" /> <span className="group-data-[state=collapsed]:hidden">New Chat</span>
+            </Button>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <Button variant="ghost" className="w-full text-base justify-start" onClick={() => setIsCreateProjectDialogOpen(true)}>
+              <FolderPlus className="mr-2 h-4 w-4" /> <span className="group-data-[state=collapsed]:hidden">New Project</span>
+            </Button>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+
+      {/* "New Project" Dialog */}
+      <Dialog open={isCreateProjectDialogOpen} onOpenChange={setIsCreateProjectDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Project</DialogTitle>
+            <DialogDescription>プロジェクト名を入力してください。</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Input id="newProjectName" placeholder="Project Name" value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateProjectDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleCreateProject}>Create</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* "New Chat" Dialog */}
+      <Dialog open={isNewChatDialogOpen} onOpenChange={setIsNewChatDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Start a New Chat</DialogTitle>
+            <DialogDescription>プロジェクト名とフェーズを選択してください。</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <p className="text-sm text-muted-foreground">Project</p>
+              <Select value={selectedProject} onValueChange={setSelectedProject}>
+                <SelectTrigger><SelectValue placeholder="Select a project" /></SelectTrigger>
+                <SelectContent>{projects.map((p) => (<SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>))}</SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-2">
+              <p className="text-sm text-muted-foreground">Phase</p>
+              <Select value={selectedPhase} onValueChange={setSelectedPhase}>
+                <SelectTrigger><SelectValue placeholder="Select a phase" /></SelectTrigger>
+                <SelectContent>{phaseLists.map((p) => (<SelectItem key={p} value={p}>{p}</SelectItem>))}</SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsNewChatDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleStartChat}>Start Chat</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}

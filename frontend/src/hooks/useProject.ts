@@ -96,6 +96,7 @@ export const useProject = () => {
     };
   }, [fetchAllProjectsAndHistories]);
 
+  // プロジェクトを削除する関数
   const deleteProject = async (projectName: string) => {
     try {
       const res = await fetch(`http://localhost:8000/projects/${projectName}`, {
@@ -112,6 +113,7 @@ export const useProject = () => {
     }
   };
 
+  // 履歴を削除する関数
   const deleteHistory = async (projectName: string, phase: string, sessionId: string) => {
     try {
       const res = await fetch(`http://localhost:8000/projects/${projectName}/histories/${phase}/${sessionId}`, {
