@@ -83,6 +83,51 @@ export const useProject = () => {
     fetchAllProjectsAndHistories();
   }, [fetchAllProjectsAndHistories]);
 
+  // カスタムイベントをリッスンして履歴を更新
+  useEffect(() => {
+    const handleHistoryUpdate = () => {
+      fetchAllProjectsAndHistories();
+    };
+
+    window.addEventListener('history-updated', handleHistoryUpdate);
+
+    return () => {
+      window.removeEventListener('history-updated', handleHistoryUpdate);
+    };
+  }, [fetchAllProjectsAndHistories]);
+
+  const deleteProject = async (projectName: string) => {
+    try {
+      const res = await fetch(`http://localhost:8000/projects/${projectName}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        fetchAllProjectsAndHistories(); // Refresh list
+      } else {
+        console.error(`Failed to delete project: ${projectName}`);
+        // TODO: Add user-facing error notification
+      }
+    } catch (error) {
+      console.error(`Error deleting project: ${projectName}`, error);
+    }
+  };
+
+  const deleteHistory = async (projectName: string, phase: string, sessionId: string) => {
+    try {
+      const res = await fetch(`http://localhost:8000/projects/${projectName}/histories/${phase}/${sessionId}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        fetchAllProjectsAndHistories(); // Refresh list
+      } else {
+        console.error(`Failed to delete history: ${phase}_${sessionId}`);
+        // TODO: Add user-facing error notification
+      }
+    } catch (error) {
+      console.error(`Error deleting history: ${phase}_${sessionId}`, error);
+    }
+  };
+
   return {
     projects,
     newProjectName,
@@ -91,5 +136,7 @@ export const useProject = () => {
     setIsCreateProjectDialogOpen,
     handleCreateProject,
     fetchAllProjectsAndHistories,
+    deleteProject,
+    deleteHistory,
   };
 };

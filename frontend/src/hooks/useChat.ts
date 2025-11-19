@@ -188,6 +188,7 @@ export const useChat = () => {
           parts: [{ text: data.response }],
         };
         setMessages((prevMessages) => [...prevMessages, aiMessage]);
+        window.dispatchEvent(new CustomEvent('history-updated'));
       } else {
         const errorMessage: Message = {
           id: crypto.randomUUID(),
@@ -209,6 +210,41 @@ export const useChat = () => {
     }
   };
 
+  const resetChat = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const backendUrl = 'http://localhost:8000/reset_session';
+      const res = await fetch(backendUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}), // Empty body as per backend endpoint
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || 'Failed to reset backend session');
+      }
+
+      // Reset frontend state
+      setProject(null);
+      setPhase('default');
+      setSessionId(null);
+      setMessages([]);
+      setDisplayedHistory(null);
+      setInput(''); // Clear input field as well
+
+      console.log("Chat session reset successfully.");
+      window.dispatchEvent(new CustomEvent('history-updated')); // Notify sidebar
+    } catch (error) {
+      console.error('Error resetting chat session:', error);
+      // Optionally, show an error to the user
+    } finally {
+      setIsLoading(false);
+    }
+  }, []); // No dependencies needed as it resets to default values
+
   return {
     project,
     phase,
@@ -224,5 +260,6 @@ export const useChat = () => {
     displayHistory,
     resumeDisplayedHistory,
     cancelHistoryDisplay,
+    resetChat,
   };
 };

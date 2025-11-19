@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FolderPlus, SquarePen, Shield } from "lucide-react"
+import { FolderPlus, SquarePen, Shield, Trash2, MoreHorizontal } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +19,22 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { useProject } from "@/hooks/useProject";
 import {
@@ -38,10 +54,13 @@ import {
 interface AppSidebarProps {
   startNewChat: (project: string, phase: string) => void;
   displayHistory: (project: string, phase: string, sessionId: string) => void;
+  project: string | null; // Added
+  resetChat: () => Promise<void>; // Added
 }
 
-export function AppSidebar({ startNewChat, displayHistory }: AppSidebarProps) {
-  // For "New Project"
+type HistoryToDelete = { projectName: string; phase: string; sessionId: string } | null;
+
+export function AppSidebar({ startNewChat, displayHistory, project, resetChat }: AppSidebarProps) {
   const {
     projects,
     newProjectName,
@@ -49,28 +68,28 @@ export function AppSidebar({ startNewChat, displayHistory }: AppSidebarProps) {
     isCreateProjectDialogOpen,
     setIsCreateProjectDialogOpen,
     handleCreateProject,
+    deleteHistory,
   } = useProject();
 
-  // For "New Chat"
+  // For "New Chat" Dialog
   const [isNewChatDialogOpen, setIsNewChatDialogOpen] = React.useState(false);
   const [selectedProject, setSelectedProject] = React.useState<string>("");
   const [selectedPhase, setSelectedPhase] = React.useState<string>("default");
 
-  // コンフィグ名が増えたらここに追記
+  // For Delete Confirmation Dialog
+  const [historyToDelete, setHistoryToDelete] = React.useState<HistoryToDelete>(null);
+
+  // For Home Alert Dialog
+  const [isHomeAlertOpen, setIsHomeAlertOpen] = React.useState(false);
+
   const phaseLists = [
-    "default",
-    "1_Recon_Enumeration",
-    "2_Vulnerability_Identification",
-    "3_Exploitation Preparation",
-    "4_Initial_Foothold",
-    "5_Exploitation",
-    "6_Privilege_Escalation",
-    "7_Flag_Capture"
+    "default", "1_Recon_Enumeration", "2_Vulnerability_Identification",
+    "3_Exploitation Preparation", "4_Initial_Foothold", "5_Exploitation",
+    "6_Privilege_Escalation", "7_Flag_Capture"
   ];
 
   const handleStartChat = () => {
     if (!selectedProject) {
-      // Add some user feedback, e.g., a toast or an alert
       console.error("Project must be selected");
       return;
     }
@@ -78,20 +97,42 @@ export function AppSidebar({ startNewChat, displayHistory }: AppSidebarProps) {
     setIsNewChatDialogOpen(false);
   };
 
+  const handleConfirmDelete = () => {
+    if (!historyToDelete) return;
+    deleteHistory(historyToDelete.projectName, historyToDelete.phase, historyToDelete.sessionId);
+    setHistoryToDelete(null);
+  };
+
+  const handleGoHome = () => {
+    if (project) { // Use the project prop
+      setIsHomeAlertOpen(true);
+    } else {
+      resetChat(); // Call resetChat directly if no active project
+    }
+  };
+
+  const confirmGoHome = () => {
+    resetChat();
+    setIsHomeAlertOpen(false);
+  };
+
   React.useEffect(() => {
     if (projects.length > 0 && !selectedProject) {
-      setSelectedProject(projects[0].name); // projectData.name を使う
+      setSelectedProject(projects[0].name);
     }
   }, [projects, selectedProject]);
 
   return (
     <Sidebar collapsible="icon" variant="inset">
       <SidebarContent className="bg-sidebar">
-        <div className="group flex h-14 shrink-0 items-center justify-center gap-2 px-4 border-b border-border">
+        <div
+          className="group flex h-14 shrink-0 items-center justify-center gap-2 px-4 border-b border-border cursor-pointer"
+          onClick={handleGoHome}
+        >
           <Shield className="h-6 w-6 text-sidebar-foreground" />
           <span className="group-data-[state=collapsed]:hidden">
             <h1 className="inline-block text-xl font-bold text-sidebar-foreground">Castor</h1>
-            <span className="ml-2 text-xs text-muted-foreground">ver1.0.0</span>
+            <span className="ml-2 text-xs text-muted-foreground">ver1.0.1</span>
           </span>
         </div>
         <SidebarGroup>
@@ -101,16 +142,14 @@ export function AppSidebar({ startNewChat, displayHistory }: AppSidebarProps) {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Button variant="ghost" className="w-full text-base justify-start" onClick={() => setIsNewChatDialogOpen(true)}>
-                    <SquarePen className="mr-2 h-4 w-4" />
-                    New Chat
+                    <SquarePen className="mr-2 h-4 w-4" /> New Chat
                   </Button>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Button variant="ghost" className="w-full text-base justify-start" onClick={() => setIsCreateProjectDialogOpen(true)}>
-                    <FolderPlus className="mr-2 h-4 w-4" />
-                    New Project
+                    <FolderPlus className="mr-2 h-4 w-4" /> New Project
                   </Button>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -118,7 +157,6 @@ export function AppSidebar({ startNewChat, displayHistory }: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Histories Group */}
         <SidebarGroup className="flex-1 overflow-y-auto">
           <SidebarGroupLabel className="text-sidebar-foreground">Histories</SidebarGroupLabel>
           <SidebarGroupContent className="group-data-[state=collapsed]:hidden">
@@ -137,14 +175,42 @@ export function AppSidebar({ startNewChat, displayHistory }: AppSidebarProps) {
                       ) : (
                         <div className="flex flex-col gap-1">
                           {projectData.histories.map((historyItem) => (
-                            <Button
-                              key={historyItem.id}
-                              variant="ghost"
-                              className="w-full justify-start h-auto px-2 py-1 text-xs"
-                              onClick={() => displayHistory(projectData.name, historyItem.phase, historyItem.id)}
-                            >
-                              <span className="truncate">{historyItem.phase}_{historyItem.id.substring(0, 8)}...</span>
-                            </Button>
+                            <div key={historyItem.id} className="flex items-center justify-between w-full pr-1 group">
+                              <Button
+                                variant="ghost"
+                                className="flex-1 justify-start h-auto px-2 py-1 text-xs"
+                                onClick={() => displayHistory(projectData.name, historyItem.phase, historyItem.id)}
+                              >
+                                <span className="truncate">{historyItem.phase}_{historyItem.id.substring(0, 8)}...</span>
+                              </Button>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7 shrink-0 opacity-0 group-hover:opacity-100"
+                                    onClick={(e) => e.stopPropagation()} // Prevent accordion from toggling
+                                  >
+                                    <MoreHorizontal className="h-3.5 w-3.5" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent side="right" align="center">
+                                  <DropdownMenuItem
+                                    onClick={(e) => {
+                                      e.stopPropagation(); // Prevent accordion from toggling
+                                      setHistoryToDelete({
+                                        projectName: projectData.name,
+                                        phase: historyItem.phase,
+                                        sessionId: historyItem.id,
+                                      });
+                                    }}
+                                    className="text-red-500"
+                                  >
+                                    <Trash2 className="mr-2 h-4 w-4" /> Delete History
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
                           ))}
                         </div>
                       )}
@@ -157,22 +223,14 @@ export function AppSidebar({ startNewChat, displayHistory }: AppSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* "New Project" Dialog */}
       <Dialog open={isCreateProjectDialogOpen} onOpenChange={setIsCreateProjectDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Project</DialogTitle>
-            <DialogDescription>
-              Enter a name for your new project.
-            </DialogDescription>
+            <DialogDescription>Enter a name for your new project.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <Input
-              id="newProjectName"
-              placeholder="Project Name"
-              value={newProjectName}
-              onChange={(e) => setNewProjectName(e.target.value)}
-            />
+            <Input id="newProjectName" placeholder="Project Name" value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCreateProjectDialogOpen(false)}>Cancel</Button>
@@ -181,40 +239,25 @@ export function AppSidebar({ startNewChat, displayHistory }: AppSidebarProps) {
         </DialogContent>
       </Dialog>
 
-      {/* "New Chat" Dialog */}
       <Dialog open={isNewChatDialogOpen} onOpenChange={setIsNewChatDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Start a New Chat</DialogTitle>
-            <DialogDescription>
-              Select a project and a phase to begin.
-            </DialogDescription>
+            <DialogDescription>Select a project and a phase to begin.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <p className="text-sm text-muted-foreground">Project</p>
               <Select value={selectedProject} onValueChange={setSelectedProject}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a project" />
-                </SelectTrigger>
-                <SelectContent>
-                  {projects.map((p) => (
-                    <SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>
-                  ))}
-                </SelectContent>
+                <SelectTrigger><SelectValue placeholder="Select a project" /></SelectTrigger>
+                <SelectContent>{projects.map((p) => (<SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>))}</SelectContent>
               </Select>
             </div>
             <div className="grid gap-2">
               <p className="text-sm text-muted-foreground">Phase</p>
               <Select value={selectedPhase} onValueChange={setSelectedPhase}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a phase" />
-                </SelectTrigger>
-                <SelectContent>
-                  {phaseLists.map((p) => (
-                    <SelectItem key={p} value={p}>{p}</SelectItem>
-                  ))}
-                </SelectContent>
+                <SelectTrigger><SelectValue placeholder="Select a phase" /></SelectTrigger>
+                <SelectContent>{phaseLists.map((p) => (<SelectItem key={p} value={p}>{p}</SelectItem>))}</SelectContent>
               </Select>
             </div>
           </div>
@@ -224,6 +267,36 @@ export function AppSidebar({ startNewChat, displayHistory }: AppSidebarProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!historyToDelete} onOpenChange={(isOpen) => !isOpen && setHistoryToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this chat history.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete}>Continue</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={isHomeAlertOpen} onOpenChange={setIsHomeAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>セッションを終了しホーム画面に戻りますか？</AlertDialogTitle>
+            <AlertDialogDescription>
+              現在のチャットセッションは終了しますが、ヒストリーからいつでも再開できます。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>キャンセル</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmGoHome}>ホームに戻る</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Sidebar>
   )
 }

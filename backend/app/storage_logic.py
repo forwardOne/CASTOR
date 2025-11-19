@@ -103,10 +103,12 @@ def delete_project(project: str) -> bool:
     return True
 
 
-def delete_history(project: str, session_id: str) -> bool:
+def delete_history(project: str, phase: str, session_id: str) -> bool:
     """
     指定プロジェクト内の履歴ファイルを削除
     """
-    path = CHAT_SESSIONS_PATH / project / session_id
-    os.remove(path)
-    return True
+    path = _get_session_path(project, phase, session_id)
+    if path.is_file():
+        path.unlink()
+        return True
+    return False

@@ -13,12 +13,12 @@ import {
 
 function InnerLayout() {
   const chatState = useChat();
-  const { project, phase } = chatState;
+  const { project, phase, resetChat } = chatState;
   const { state: sidebarState } = useSidebar(); // useSidebar を呼び出し
 
   return (
     <div className="flex h-screen w-screen bg-sidebar">
-      <AppSidebar startNewChat={chatState.startNewChat} displayHistory={chatState.displayHistory} />
+      <AppSidebar startNewChat={chatState.startNewChat} displayHistory={chatState.displayHistory} resetChat={resetChat} project={project} />
       <SidebarInset>
         <header className="flex h-14 shrink-0 items-center bg-card rounded-tl-lg rounded-tr-lg gap-2">
           <div className="flex items-center gap-4 px-3">

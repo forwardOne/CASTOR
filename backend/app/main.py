@@ -156,14 +156,35 @@ def remove_project_endpoint(project: str):
         raise HTTPException(status_code=500, detail=f"プロジェクト削除に失敗: {e}")
 
 
-@app.delete("/projects/{project}/histories/{session_id}")
-def remove_history_endpoint(project: str, session_id: str):
+@app.delete("/projects/{project}/histories/{phase}/{session_id}")
+def remove_history_endpoint(project: str, phase: str, session_id: str):
     """
-    指定プロジェクト内の履歴ファイルを削除
-    仮作成
+    指定された履歴ファイルを削除
     """
     try:
-        deleted = delete_history(project, session_id)
-        return {"deleted": deleted, "file": session_id}
+        deleted = delete_history(project, phase, session_id)
+        if deleted:
+            return {"deleted": True, "file": f"{phase}_{session_id}.json"}
+        else:
+            raise HTTPException(status_code=404, detail="History file not found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"履歴ファイル削除に失敗しました: {e}")
+
+
+@app.post("/reset_session")
+async def reset_session_endpoint():
+    """
+    バックエンドのグローバルチャットセッションをリセットする
+    """
+    try:
+        await create_or_resume_session(phase="default", history=None)
+        return {"message": "Backend session reset successfully."}
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"セッションのリセットに失敗しました: {e}")
+
+
+# Add this block for uvicorn to run correctly with --reload on Windows
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
