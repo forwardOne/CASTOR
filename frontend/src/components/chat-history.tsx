@@ -27,13 +27,13 @@ const WelcomeScreen: React.FC = () => (
 const ChatMessageBubble: React.FC<{ message: Message }> = ({ message }) => {
   const isUser = message.role === MessageRole.USER;
 
-  // ユーザーメッセージ(右寄せ、最大幅設定、背景色)
+  // ユーザーメッセージ(右寄せ、最大幅設定、その他設定もここで)
   const userContainerClass = 'justify-end';
-  const userBubbleClass = 'max-w-xs lg:max-w-md gap-2 rounded-lg px-4 py-2 mr-3 text-[16px] bg-accent text-accent-foreground ml-auto';
+  const userBubbleClass = 'max-w-ms lg:max-w-md gap-2 rounded-2xl px-4 py-2 mr-3 text-[16px] leading-8 bg-accent text-accent-foreground ml-auto';
 
-  // モデルメッセージ(左寄せ、最大幅なし、背景色)
+  // モデルメッセージ(左寄せ、最大幅なし、その他設定もここで)
   const modelContainerClass = 'justify-start';
-  const modelBubbleClass = 'w-full gap-2 rounded-lg px-2 py-2 mr-5 text-[16px] bg-card text-card-foreground'; 
+  const modelBubbleClass = 'w-full gap-2 rounded-lg px-2 py-2 mr-3 text-[16px] leading-relaxed text-card-foreground space-y-6'; 
 
   return (
     <div className={`flex mb-6 ${isUser ? userContainerClass : modelContainerClass}`}>
