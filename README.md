@@ -15,13 +15,13 @@
 
 ### 動作画面
 <p align="center">
-<img width="784" height="552" alt="Image" src="https://github.com/user-attachments/assets/b891264b-96db-41b1-8bbe-e94ef1a94196" />
+<img width="1159" height="695" alt="Image" src="https://github.com/user-attachments/assets/7dae7738-bba2-48b4-9cd6-18342b2c5684" />
 </p>
 
 
 ### 回答例イメージ
 <p align="center">
-<img width="392" height="275" alt="Image" src="https://github.com/user-attachments/assets/0c34d36e-6523-46a1-ab5d-8e85eae2756b" />
+<img width="1159" height="692" alt="Image" src="https://github.com/user-attachments/assets/0d4247b0-a9d8-4008-b6af-301b34b6f546" />
 </p>
 
 ## 利用上の注意
