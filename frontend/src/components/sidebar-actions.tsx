@@ -66,22 +66,24 @@ export function SidebarActions({ startNewChat }: SidebarActionsProps) {
 
   return (
     <>
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <Button variant="ghost" className="w-full text-base justify-start hover:!bg-card" onClick={() => setIsNewChatDialogOpen(true)}>
-              <SquarePen className="mr-2 h-4 w-4" /> <span className="group-data-[state=collapsed]:hidden">New Chat</span>
-            </Button>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <Button variant="ghost" className="w-full text-base justify-start hover:!bg-card" onClick={() => setIsCreateProjectDialogOpen(true)}>
-              <FolderPlus className="mr-2 h-4 w-4" /> <span className="group-data-[state=collapsed]:hidden">New Project</span>
-            </Button>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </SidebarMenu>
+      <div >
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Button variant="ghost" className="w-full text-base justify-start hover:!bg-card" onClick={() => setIsNewChatDialogOpen(true)}>
+                <SquarePen className="mr-2 h-4 w-4" /> <span className="group-data-[state=collapsed]:hidden">New Chat</span>
+              </Button>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Button variant="ghost" className="w-full text-base justify-start hover:!bg-card" onClick={() => setIsCreateProjectDialogOpen(true)}>
+                <FolderPlus className="mr-2 h-4 w-4" /> <span className="group-data-[state=collapsed]:hidden">New Project</span>
+              </Button>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </div>
 
       {/* "New Project" Dialog */}
       <Dialog open={isCreateProjectDialogOpen} onOpenChange={setIsCreateProjectDialogOpen}>
@@ -111,14 +113,14 @@ export function SidebarActions({ startNewChat }: SidebarActionsProps) {
             <div className="grid gap-2">
               <p className="text-sm text-muted-foreground">Project</p>
               <Select value={selectedProject} onValueChange={setSelectedProject}>
-                <SelectTrigger><SelectValue placeholder="Select a project" /></SelectTrigger>
+                <SelectTrigger className="w-full"><SelectValue placeholder="Select a project" /></SelectTrigger>
                 <SelectContent>{projects.map((p) => (<SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>))}</SelectContent>
               </Select>
             </div>
             <div className="grid gap-2">
               <p className="text-sm text-muted-foreground">Phase</p>
               <Select value={selectedPhase} onValueChange={setSelectedPhase}>
-                <SelectTrigger><SelectValue placeholder="Select a phase" /></SelectTrigger>
+                <SelectTrigger className="w-full"><SelectValue placeholder="Select a phase" /></SelectTrigger>
                 <SelectContent>{phaseLists.map((p) => (<SelectItem key={p} value={p}>{p}</SelectItem>))}</SelectContent>
               </Select>
             </div>

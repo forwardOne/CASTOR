@@ -31,18 +31,17 @@ export const CodeBlock: React.FC<CodeProps> = ({ className, children }) => {
 
   // コードブロック
   return (
-    <div className="relative group my-4">
-      <Button
-        onClick={handleCopy}
-        variant="ghost"
-        size="icon-sm"
-        className="absolute right-1 top-1 p-1 text-zinc-500"
-      >
-        <Copy className="w-4 h-4" />
-      </Button>
-
-      <pre ref={codeRef}>
+    <div className="my-4">
+      <pre ref={codeRef} className="relative group overflow-x-auto w-95 xs:w-95 lg:w-lg xl:w-2xl rounded-md">
         <code className={className}>{children}</code>
+        <Button
+          onClick={handleCopy}
+          variant="ghost"
+          size="icon-sm"
+          className="absolute right-1 top-1 p-1 text-zinc-500"
+        >
+          <Copy className="w-4 h-4" />
+        </Button>
       </pre>
     </div>
   );

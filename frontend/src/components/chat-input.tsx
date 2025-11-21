@@ -34,8 +34,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   if (displayedHistory) {
     return (
-      <div className="flex flex-col border border-border rounded-2xl shadow-lg bg-muted p-2">
-        <div className="flex flex-col items-center justify-center p-4 gap-2">
+      <div className="flex flex-col border border-border rounded-2xl shadow-lg bg-muted py-4">
+        <div className="flex flex-col items-center justify-center p-2">
           <p className="text-muted-foreground text-center">
             履歴を表示中: プロジェクト「{displayedHistory.project}」フェーズ「{displayedHistory.phase}」
           </p>
@@ -54,7 +54,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="flex flex-col border border-border rounded-2xl shadow-lg bg-card p-2">
+      <div className="flex flex-col border border-border rounded-2xl shadow-lg bg-card py-2">
         <Textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
