@@ -105,7 +105,7 @@ export function SidebarActions({ startNewChat, isHistoryVisible, toggleHistoryVi
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Project</DialogTitle>
-            <DialogDescription>プロジェクト名を入力してください。</DialogDescription>
+            <DialogDescription>プロジェクト名を入力してください。例: "THM_OWASP_Top10"</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <Input id="newProjectName" placeholder="Project Name" value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} />
@@ -126,7 +126,10 @@ export function SidebarActions({ startNewChat, isHistoryVisible, toggleHistoryVi
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <p className="text-sm text-muted-foreground">Project</p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm text-muted-foreground">Project:</p>
+                <span className="text-xs text-muted-foreground ">(チャット開始には作成済のプロジェクトが必要です。)</span>
+              </div>
               <Select value={selectedProject} onValueChange={setSelectedProject}>
                 <SelectTrigger className="w-full"><SelectValue placeholder="Select a project" /></SelectTrigger>
                 <SelectContent>{projects.map((p) => (<SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>))}</SelectContent>
@@ -135,7 +138,8 @@ export function SidebarActions({ startNewChat, isHistoryVisible, toggleHistoryVi
             
             <div className="grid gap-2">
               <div className="flex items-center gap-2">
-                <p className="text-sm text-muted-foreground">Phase</p>
+                <p className="text-sm text-muted-foreground">Phase: </p>
+                <span className="text-xs text-muted-foreground">(defaultは抽象的な対話用です。フェーズの指定を推奨します。)</span>
               </div>
               <Select value={selectedPhase} onValueChange={setSelectedPhase}>
                 <SelectTrigger className="w-full"><SelectValue placeholder="Select a phase" /></SelectTrigger>

@@ -34,7 +34,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   if (displayedHistory) {
     return (
-      <div className='pb-10'>
+      <div className='pb-10 max-md:pb-2'>
         <div className="flex flex-col border border-border rounded-4xl shadow-lg bg-muted mx-2 sm:mx-6 lg:mx-auto lg:max-w-3xl">
           <div className="flex flex-col items-center justify-center h-29 p-2">
             <p className="text-muted-foreground text-center">
@@ -55,7 +55,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="pb-10">
+    <form onSubmit={handleSubmit} className="pb-10 max-md:pb-2">
       <div className="flex flex-col border border-border rounded-4xl shadow-lg bg-card mx-2 sm:mx-6 lg:mx-auto lg:max-w-3xl">
         <div className='flex items-center pt-3 pl-3'>
           <Textarea
@@ -63,7 +63,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             onChange={(e) => setInput(e.target.value)}
             placeholder={placeholderText}
             disabled={disabled || isLoading}
-            className="!bg-transparent !text-base placeholder:text-ms text-card-foreground resize-none border-none focus-visible:ring-0 shadow-none min-h-[56px]"
+            className="!bg-transparent text-md text-card-foreground resize-none border-none focus-visible:ring-0 shadow-none min-h-[56px]"
           />
         </div>
         <div className="flex items-center pr-3 pb-3">

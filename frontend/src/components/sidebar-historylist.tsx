@@ -56,7 +56,7 @@ export function ProjectHistoryList({ displayHistory }: ProjectHistoryListProps) 
             {/* <SidebarGroupLabel className="text-xs text-muted-foreground px-2">Histories</SidebarGroupLabel> */}
             <SidebarGroupContent className="group-data-[state=collapsed]:hidden"> 
               {projects.length === 0 ? (
-                <p className="w-full text-md p-2 rounded-lg hover:!bg-card hover:no-underline">No projects found.</p>
+                <p className="w-full text-md p-2 rounded-lg hover:no-underline">No projects found.</p>
               ) : (
                 <Accordion type="multiple" className="w-full">
                   {projects.map((projectData) => (

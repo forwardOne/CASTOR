@@ -21,7 +21,7 @@ export function PhaseDescriptions() {
   }, [isOpen]);
 
   return (
-    <div ref={cardRef} className="w-full max-w-2xl">
+    <div ref={cardRef} className="w-full max-w-md">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <Card>
           <CollapsibleTrigger asChild>

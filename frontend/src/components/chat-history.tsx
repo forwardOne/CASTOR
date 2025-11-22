@@ -18,17 +18,13 @@ interface ChatHistoryProps {
 
 // チャット履歴がない場合のウェルカム画面
 const WelcomeScreen: React.FC = () => (
-  <div className="flex flex-col h-full w-full mx-6">
-    <div className="text-center pt-[55%] pb-[5%]">
-        <div className="flex justify-center text-5xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent mb-3">
-            Hello, User
-        </div>
-        <p className="text-2xl text-muted-foreground">What "root" shall we hack today?</p>
+    <div className="flex flex-col h-full w-full items-center justify-center text-center pt-20 pb-4">
+      <div className="text-6xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent mb-2">
+          Hello, User
+      </div>
+      <p className="text-xl text-muted-foreground mb-4">What "root" shall we hack today?</p>
+      <PhaseDescriptions />
     </div>
-    <div className="flex-grow flex items-center justify-center pb-2">
-        <PhaseDescriptions />
-    </div>
-  </div>
 );
 
 // チャットメッセージバブル
@@ -80,10 +76,10 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({ messages, isLoading })
   if (messages.length === 0 && !isLoading) {
     return (
       <ScrollArea className="flex-1">
-        <div className="flex mx-2 sm:mx-6 lg:mx-auto lg:max-w-3xl">
+        <div className="flex mx-2 mx-auto max-w-lg">
           <WelcomeScreen />
         </div>
-      </ScrollArea>
+    </ScrollArea>
     );
   }
 
