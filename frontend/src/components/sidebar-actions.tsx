@@ -23,6 +23,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useProject } from "@/hooks/useProject";
+import { phaseLists } from "@/lib/phases";
 
 interface SidebarActionsProps {
   startNewChat: (project: string, phase: string) => void;
@@ -45,11 +46,8 @@ export function SidebarActions({ startNewChat, isHistoryVisible, toggleHistoryVi
   const [selectedProject, setSelectedProject] = React.useState<string>("");
   const [selectedPhase, setSelectedPhase] = React.useState<string>("default");
 
-  const phaseLists = [
-    "default", "1_Recon_Enumeration", "2_Vulnerability_Identification",
-    "3_Exploitation Preparation", "4_Initial_Foothold", "5_Exploitation",
-    "6_Privilege_Escalation", "7_Flag_Capture"
-  ];
+
+
 
   const handleStartChat = () => {
     if (!selectedProject) {
@@ -93,8 +91,8 @@ export function SidebarActions({ startNewChat, isHistoryVisible, toggleHistoryVi
                   <PanelTopOpen className="mr-2 h-4 w-4" />
                 )}
                 <span>History List</span>
-                <span className="group-data-[state=collapsed]:hidden text-lg text-muted-foreground">
-                  {isHistoryVisible ? "<" : ">"}
+                <span className="group-data-[state=collapsed]:hidden text-xs text-muted-foreground pt-[1px]">
+                  {isHistoryVisible ? "" : "Click Open"}
                 </span>
               </Button>
             </SidebarMenuButton>
@@ -134,13 +132,17 @@ export function SidebarActions({ startNewChat, isHistoryVisible, toggleHistoryVi
                 <SelectContent>{projects.map((p) => (<SelectItem key={p.name} value={p.name}>{p.name}</SelectItem>))}</SelectContent>
               </Select>
             </div>
+            
             <div className="grid gap-2">
-              <p className="text-sm text-muted-foreground">Phase</p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm text-muted-foreground">Phase</p>
+              </div>
               <Select value={selectedPhase} onValueChange={setSelectedPhase}>
                 <SelectTrigger className="w-full"><SelectValue placeholder="Select a phase" /></SelectTrigger>
-                <SelectContent>{phaseLists.map((p) => (<SelectItem key={p} value={p}>{p}</SelectItem>))}</SelectContent>
+                <SelectContent>{phaseLists.map((p) => (<SelectItem key={p} value={p}>{p.replace(/_/g, ' ')}</SelectItem>))}</SelectContent>
               </Select>
             </div>
+
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsNewChatDialogOpen(false)}>Cancel</Button>

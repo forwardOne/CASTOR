@@ -3,7 +3,7 @@ import { Trash2, MoreVertical, Folder } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
+  // SidebarGroupLabel,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,15 +53,15 @@ export function ProjectHistoryList({ displayHistory }: ProjectHistoryListProps) 
       <div className="flex min-h-0 overflow-y-auto overflow-x-hidden">
         <ScrollArea className="flex flex-1">
           <SidebarGroup className="flex-1">
-            <SidebarGroupLabel className="text-xs text-muted-foreground px-2">Histories</SidebarGroupLabel>
+            {/* <SidebarGroupLabel className="text-xs text-muted-foreground px-2">Histories</SidebarGroupLabel> */}
             <SidebarGroupContent className="group-data-[state=collapsed]:hidden"> 
               {projects.length === 0 ? (
-                <p className="text-sm text-muted-foreground p-2">No projects found.</p>
+                <p className="w-full text-md p-2 rounded-lg hover:!bg-card hover:no-underline">No projects found.</p>
               ) : (
                 <Accordion type="multiple" className="w-full">
                   {projects.map((projectData) => (
-                  <AccordionItem key={projectData.name} value={projectData.name}>
-                    <AccordionTrigger className="px-2 py-1.5 text-sm font-medium hover:no-underline">
+                  <AccordionItem key={projectData.name} value={projectData.name} className="border-b-0">
+                    <AccordionTrigger className="w-full text-md px-2 py-1.75 hover:!bg-card hover:no-underline">
                       <div className="flex items-center gap-2">
                         <Folder className="mr-2 h-4 w-4" />
                         <span>{projectData.name}</span>
@@ -69,13 +69,13 @@ export function ProjectHistoryList({ displayHistory }: ProjectHistoryListProps) 
                     </AccordionTrigger>
                       <AccordionContent className="pb-1">
                         {projectData.histories.length === 0 ? (
-                          <p className="text-xs text-muted-foreground px-4 py-1">No history.</p>
+                          <p className="text-xs text-muted-foreground pl-10 py-1">No history.</p>
                         ) : (
                           <div className="flex flex-col gap-1">
                             {projectData.histories.map((historyItem) => (
-                              <div key={historyItem.id} className="flex w-full items-center justify-between rounded-lg hover:bg-card group/card ">
+                              <div key={historyItem.id} className="flex w-full items-center justify-between rounded-lg hover:bg-card group/card">
                                 <div
-                                  className="flex-1 justify-start h-auto px-4 py-1 text-xs"
+                                  className="flex-1 justify-start h-auto text-xs pl-10 py-1"
                                   onClick={() => displayHistory(projectData.name, historyItem.phase, historyItem.id)}
                                 >
                                   <span className="truncate">{historyItem.phase}_{historyItem.id.substring(0, 12)}...</span>

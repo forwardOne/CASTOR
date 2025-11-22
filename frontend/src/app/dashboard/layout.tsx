@@ -35,7 +35,7 @@ function InnerLayout() {
           <div className="flex items-center gap-4 px-3">
             <SidebarTrigger className="" />
             {sidebarState === 'collapsed' && (
-              <div className="text-lg text-muted-foreground mb-1 pr-3">CASTOR - AI Pentest Assistant</div>
+              <div className="text-lg text-muted-foreground font-semibold mb-1 pr-3">CASTOR - AI Pentest Assistant</div>
             )}
             {project && (
               <>
