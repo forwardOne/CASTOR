@@ -1,13 +1,17 @@
+// frontend/src/components/app-sidebar.tsx
 import * as React from "react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
 import { SidebarHeader } from "./sidebar-header";
 import { SidebarActions } from "./sidebar-actions";
 import { ProjectHistoryList } from "./sidebar-historylist";
+
+
 
 interface AppSidebarProps {
   startNewChat: (project: string, phase: string) => void;
@@ -27,12 +31,9 @@ export function AppSidebar({
   toggleHistoryVisibility,
 }: AppSidebarProps) {
   return (
-    <Sidebar collapsible="icon" variant="inset">
+    <Sidebar collapsible="icon" variant="inset" className="bg-muted">
+      <SidebarHeader project={project} resetChat={resetChat} />
       <SidebarContent className="bg-muted">
-        {/* SidebarHeader: サイドバーのヘッダー部分（ロゴ、タイトル、ホームに戻る機能）を扱います。 */}
-        <SidebarHeader project={project} resetChat={resetChat} />
-
-        {/* SidebarActions: 「New Chat」と「New Project」ボタン、および関連するダイアログを扱います。 */}
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarActions
@@ -43,9 +44,10 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* ProjectHistoryList: プロジェクトと履歴のアコーディオンリストを表示し、履歴の削除機能を扱います。 */}
         {isHistoryVisible && <ProjectHistoryList displayHistory={displayHistory} />}
       </SidebarContent>
+      <SidebarFooter className="bg-muted border-t border-border p-2">
+      </SidebarFooter>
     </Sidebar>
   );
 }
