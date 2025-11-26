@@ -66,25 +66,25 @@ export function SidebarActions({ startNewChat, isHistoryVisible, toggleHistoryVi
 
   return (
     <>
-      <div>
+      <div className="pt-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Button variant="ghost" className="w-full text-md justify-start hover:!bg-card !px-2" onClick={() => setIsNewChatDialogOpen(true)}>
+              <Button variant="ghost" className="w-full text-[16px] justify-start hover:!bg-card !px-2" onClick={() => setIsNewChatDialogOpen(true)}>
                 <SquarePen className="mr-2 h-4 w-4" /> <span className="group-data-[state=collapsed]:hidden">New Chat</span>
               </Button>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Button variant="ghost" className="w-full text-md justify-start hover:!bg-card !px-2" onClick={() => setIsCreateProjectDialogOpen(true)}>
+              <Button variant="ghost" className="w-full text-[16px] justify-start hover:!bg-card !px-2" onClick={() => setIsCreateProjectDialogOpen(true)}>
                 <FolderPlus className="mr-2 h-4 w-4" /> <span className="group-data-[state=collapsed]:hidden">New Project</span>
               </Button>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Button variant="ghost" className="flex w-full text-md justify-start hover:!bg-card !px-2" onClick={toggleHistoryVisibility}>
+              <Button variant="ghost" className="flex w-full text-[16px] justify-start hover:!bg-card !px-2" onClick={toggleHistoryVisibility}>
                 {isHistoryVisible ? (
                   <PanelTopClose className="mr-2 h-4 w-4" />
                 ) : (

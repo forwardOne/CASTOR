@@ -4,7 +4,6 @@ import { ChatHistory } from '@/components/chat-history';
 import { ChatInput } from '@/components/chat-input';
 import type { Message } from '@/types/types';
 
-// Define the type for the context provided by the Outlet
 type ChatContextType = {
   project: string | null;
   phase: string;

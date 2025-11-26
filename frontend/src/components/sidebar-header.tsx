@@ -35,7 +35,7 @@ export function SidebarHeader({ project, resetChat }: SidebarHeaderProps) {
   return (
     <>
       <div
-        className="group flex h-14 shrink-0 items-center justify-start px-3 gap-3 border-b border-border cursor-pointer"
+        className="flex h-14 shrink-0 bg-muted items-center justify-start border-b border-border cursor-pointer px-3 pb-2 gap-3 group"
         onClick={handleGoHome}
       >
         <Shield className="h-6 w-6 text-sidebar-foreground"/>
