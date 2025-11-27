@@ -28,7 +28,7 @@ const WelcomeScreen: React.FC = () => (
 );
 
 // チャットメッセージバブル
-const ChatMessageBubble: React.FC<{ message: Message }> = ({ message }) => {
+export const ChatMessageBubble: React.FC<{ message: Message }> = ({ message }) => {
   const isUser = message.role === MessageRole.USER;
 
   // ユーザーメッセージ(右寄せ、最大幅設定、その他設定もここで)
@@ -64,10 +64,13 @@ const ChatMessageBubble: React.FC<{ message: Message }> = ({ message }) => {
 }
 
 // ローディングインジケーター
+import { Spinner } from "@/components/ui/spinner";
+
 const LoadingIndicator = () => (
   <div className="flex justify-start">
-    <div className="max-w-xs lg:max-w-md px-4 py-2 rounded-lg bg-muted text-muted-foreground">
-      AIが考え中です...
+    <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted text-muted-foreground">
+      <Spinner />
+      <span>AIが考え中です...</span>
     </div>
   </div>
 );
