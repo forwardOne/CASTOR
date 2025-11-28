@@ -16,15 +16,12 @@
 *   **拡張性・再現性の確保**: スキャン結果や解析結果を標準化されたJSON形式で保持し、後続処理やレポート生成に活用可能です。CLIとの統合も視野に入れています。
 
 
-### 動作画面
+### 動作イメージ
 <p align="center">
-<img width="1239" height="668" alt="Image" src="./images/動作画面.png" />
+<img alt="Image" src="./images/回答例2_1.png" />
 </p>
-
-
-### 回答例イメージ
 <p align="center">
-<img width="1245" height="672" alt="Image" src="./images/回答例イメージ.png" />
+<img alt="Image" src="./images/回答例2_2.png" />
 </p>
 
 ## 利用上の注意
@@ -75,7 +72,7 @@ cd castor
 GEMINI_API_KEY="YOUR_API_KEY_HERE"
 ```
 
-### 3. バックエンドのセットアップと起動
+### 3. セットアップ
 
 #### 仮想環境の作成とアクティベート
 ```bash
@@ -92,31 +89,30 @@ source backend/venv/bin/activate
 # 仮想環境がアクティブな状態で実行
 pip install -r backend/requirements.txt
 ```
-
-#### バックエンドの起動
-```bash
-# プロジェクトルートで実行
-uvicorn app.main:app --reload --app-dir backend
-```
-サーバーは `http://127.0.0.1:8000` で起動します。
-
-### 4. フロントエンドのセットアップと起動
-
-#### 依存関係のインストール
 ```bash
 cd frontend
 npm install
 ```
 
+### 4.起動
+プロジェクトルートに配置されている `start.bat` を実行することで、バックエンドとフロントエンドを同時に起動できます。  
+このスクリプトは、新しいウィンドウでバックエンドとフロントエンドをそれぞれ起動します。  
+個別に起動する場合は以下の方法で可能です。
+
+
+#### バックエンドの起動
+```bash
+cd backend
+uvicorn app.main:app --reload
+```
+サーバーは `http://127.0.0.1:8000` で起動します。
+
 #### フロントエンドの起動
 ```bash
+cd frontend
 npm run dev
 ```
 アプリケーションは `http://localhost:5173` でアクセス可能になります。
-
-### 5. バッチファイルでの起動 (Windows向け)
-プロジェクトルートに配置されている `start.bat` を実行することで、バックエンドとフロントエンドを同時に起動できます。
-このスクリプトは、新しいウィンドウでバックエンドとフロントエンドをそれぞれ起動します。
 
 
 ---
@@ -127,15 +123,12 @@ This project is licensed under the Apache License, Version 2.0. See the [LICENSE
 ---
 
 ## 現在の課題
-- 要件定義は機能・非機能で行ったが、実装中の気付きに合わせた変更を言語化すべきだった。
 - PoC的なポートフォリオのため細かい更新が多く、バージョニング管理の必要性は検討中。
-- コードアシストを受けた部分と手作業・目視でのフロー確認についての言及。
 - READMEへのアーキテクチャ図の追加。
-
 - ~~業務的なチケット化・スコープ管理を意識したが、個人開発では難しい部分が多かった。~~  
 →Issueを立てセルフレビューをするようにした。
 - ~~テストコードでの実施が課題。自動化も含め勉強の必要性を感じている。~~  
-→Pytest,Vitestの導入とGithub Actionsを試している
+→Pytest,Vitest,Github Actions導入
 
 ---
 ## 開発履歴
