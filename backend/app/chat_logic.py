@@ -8,6 +8,7 @@ from google import genai
 from google.genai import types
 from .storage_logic import load_history
 import asyncio
+import random
 from typing import List
 
 load_dotenv()
@@ -87,7 +88,8 @@ async def create_or_resume_session(phase: str, history: List[dict] = None):
     async with chat_lock:
         # 履歴があれば、それを渡してセッションを再構築
         # historyがNoneや空リストの場合は、新しいセッションとして動作する
-        chat = await client.aio.chats.create(
+        # `client.aio.chats.create` returns an AsyncChat object (not awaitable), so do not await it.
+        chat = client.aio.chats.create(
             model=GEMINI_MODEL,
             config=config,
             history=history or [],  # 履歴がNoneや空リストの場合は空のリストを渡す
@@ -117,19 +119,32 @@ async def reset_chat() -> None:
     _ensure_client_initialized()
 
     async with chat_lock:
-        chat = await client.aio.chats.create(model=GEMINI_MODEL)
+        # `client.aio.chats.create` returns an AsyncChat object (not awaitable)
+        chat = client.aio.chats.create(model=GEMINI_MODEL)
     print("Chat session reset.")
 
 
-async def send_chat_message(message: str):
+async def send_chat_message(message: str, max_retries: int = 5, base_delay: float = 1.0):
     """
-    メッセージ送信、応答取得、非SSE
+    メッセージ送信、応答取得、非SSE。429に対して指数バックオフでリトライします。
     履歴保存はエンドポイント側
     """
     global chat
     async with chat_lock:
         if chat is None:
             raise RuntimeError("Chat session is not initialized. Call create_or_resume_session first.")
-        response = await chat.send_message(message)
-        return response.text
+        attempt = 0
+        while True:
+            try:
+                response = await chat.send_message(message)
+                return response.text
+            except Exception as e:
+                attempt += 1
+                msg = str(e)
+                is_rate_limit = "RESOURCE_EXHAUSTED" in msg or "429" in msg
+                if not is_rate_limit or attempt > max_retries:
+                    raise
+                delay = base_delay * (2 ** (attempt - 1)) + random.uniform(0, 0.5)
+                print(f"Rate limit hit (attempt {attempt}/{max_retries}), retrying in {delay:.1f}s...")
+                await asyncio.sleep(delay)
 
