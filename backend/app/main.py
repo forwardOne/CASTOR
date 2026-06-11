@@ -25,7 +25,8 @@ async def lifespan(app: FastAPI):
     yield
 
 # --- FastAPI ---
-app = FastAPI()
+# Attach the lifespan so startup initialization runs (init_chat_on_startup)
+app = FastAPI(lifespan=lifespan)
 
 
 # --- CORS(React/Vite) ---

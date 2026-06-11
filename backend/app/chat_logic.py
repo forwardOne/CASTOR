@@ -15,13 +15,24 @@ load_dotenv()
 # --- Gemini ---
 GEMINI_MODEL = "gemini-2.5-flash"
 
-api_key = os.environ.get("GEMINI_API_KEY")
-if not api_key or api_key == "YOUR_API_KEY_FROM_GOOGLE_AI_STUDIO":
-    raise ValueError("APIキーが.envファイルに設定されていないか、無効です。")
-
-client = genai.Client(api_key=api_key) # async_client = client.aio を使うか検討中
+# Delay client initialization to avoid raising on module import.
+# Tests and other modules may import this module without an API key.
+client = None
 chat = None
 chat_lock = asyncio.Lock()
+
+
+def _ensure_client_initialized():
+    """Lazy initialize `genai.Client`. Raises ValueError if API key missing.
+
+    Call this at the start of async entrypoints that need the client.
+    """
+    global client
+    if client is None:
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if not api_key or api_key == "YOUR_API_KEY_FROM_GOOGLE_AI_STUDIO":
+            raise ValueError("APIキーが.envファイルに設定されていないか、無効です。")
+        client = genai.Client(api_key=api_key)
 
 
 # --- PromptConfigs ---
@@ -69,7 +80,10 @@ async def create_or_resume_session(phase: str, history: List[dict] = None):
     
     # フェーズに応じた設定を取得
     config = get_generation_content_config(phase)
-    
+
+    # Ensure client exists (may raise ValueError on missing API key)
+    _ensure_client_initialized()
+
     async with chat_lock:
         # 履歴があれば、それを渡してセッションを再構築
         # historyがNoneや空リストの場合は、新しいセッションとして動作する
@@ -77,7 +91,7 @@ async def create_or_resume_session(phase: str, history: List[dict] = None):
             model=GEMINI_MODEL,
             config=config,
             history=history or [],  # 履歴がNoneや空リストの場合は空のリストを渡す
-        )        
+        )
     if history:
         print(f"Chat session resumed with {len(history)} messages.")
     else:
@@ -88,6 +102,7 @@ async def init_chat_on_startup():
     """
     起動時初期セッション開始。
     """
+    # create_or_resume_session will ensure client is initialized
     await create_or_resume_session(phase="default") 
     print("Chat session initialized.")
 
@@ -98,6 +113,9 @@ async def reset_chat() -> None:
     呼び出し側は `await reset_chat()` を使用してください。
     """
     global chat
+    # Ensure client exists before attempting reset
+    _ensure_client_initialized()
+
     async with chat_lock:
         chat = await client.aio.chats.create(model=GEMINI_MODEL)
     print("Chat session reset.")
