@@ -73,7 +73,7 @@ async def create_or_resume_session(phase: str, history: List[dict] = None):
     async with chat_lock:
         # 履歴があれば、それを渡してセッションを再構築
         # historyがNoneや空リストの場合は、新しいセッションとして動作する
-        chat = client.aio.chats.create(
+        chat = await client.aio.chats.create(
             model=GEMINI_MODEL,
             config=config,
             history=history or [],  # 履歴がNoneや空リストの場合は空のリストを渡す
@@ -92,12 +92,14 @@ async def init_chat_on_startup():
     print("Chat session initialized.")
 
 
-def reset_chat():
+async def reset_chat() -> None:
     """
-    チャットセッションリセット
+    チャットセッションリセット（非同期）。
+    呼び出し側は `await reset_chat()` を使用してください。
     """
     global chat
-    chat = client.aio.chats.create(model=GEMINI_MODEL)
+    async with chat_lock:
+        chat = await client.aio.chats.create(model=GEMINI_MODEL)
     print("Chat session reset.")
 
 
@@ -108,6 +110,8 @@ async def send_chat_message(message: str):
     """
     global chat
     async with chat_lock:
+        if chat is None:
+            raise RuntimeError("Chat session is not initialized. Call create_or_resume_session first.")
         response = await chat.send_message(message)
         return response.text
 
