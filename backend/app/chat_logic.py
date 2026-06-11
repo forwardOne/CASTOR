@@ -13,7 +13,7 @@ from typing import List
 load_dotenv()
 
 # --- Gemini ---
-GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_MODEL = "gemini-3.5-flash"
 
 # Delay client initialization to avoid raising on module import.
 # Tests and other modules may import this module without an API key.
